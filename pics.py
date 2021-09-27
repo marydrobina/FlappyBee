@@ -1,3 +1,6 @@
+"""pics.py module"""
+
+
 import pygame
 
 WALK_RIGHT = [pygame.image.load('r1.png'), pygame.image.load('r2.png'),

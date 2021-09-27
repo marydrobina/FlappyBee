@@ -1,6 +1,7 @@
 import pygame
 import random
 
+import config
 import pics
 
 
@@ -29,7 +30,6 @@ class Bird:
         else:
             display.blit(pics.BIRD_FLY_RIGHT[self.img_cnt // 2], (self.x, self.y))
             self.img_cnt += 1
-
         if self.come and self.cd_hide == 0:
             if self.y < self.dest_y:
                 self.y += self.speed
@@ -99,7 +99,6 @@ class Game:
         else:
             if self.last_move == "right":
                 self.display.blit(pics.BEE_STAND1, self.coordinates)
-
             elif self.last_move == "left":
                 self.display.blit(pics.BEE_STAND2, self.coordinates)
 
@@ -109,12 +108,9 @@ class Game:
         bird1.draw()
         bird2.draw()
         bird3.draw()
-
         self.usr_animation()
-
         for bullet in self.bullets:
             bullet.draw(self.display)
-
         pygame.display.update()
 
     def make_bullet(self):
@@ -123,15 +119,12 @@ class Game:
                 bullet.x += bullet.vel
             else:
                 self.bullets.pop(self.bullets.index(bullet))
-
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_f]:
             if self.last_move == "right":
                 facing = 1
             else:
                 facing = -1
-
             if len(self.bullets) < 10:
                 x = self.coordinates[0]
                 y = self.coordinates[1]
@@ -147,21 +140,15 @@ class Game:
         bird1 = Bird(-80, 5, 0)
         bird2 = Bird(-90, 6, 70)
         bird3 = Bird(-80, 5, 120)
-
         while self.run:
-
             self.clock.tick(100)
             pygame.time.delay(22)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False
-
+                    self.run = False
             keys = pygame.key.get_pressed()
-
             self.make_bullet()
             x = self.coordinates[0]
-
             if keys[pygame.K_LEFT] and x > 5:
                 x -= self.speed
                 self.directions['left'] = True
@@ -176,13 +163,11 @@ class Game:
                 self.standR = True
                 self.standL = False
                 self.last_move = "right"
-
-            if not self.is_jump:
-                if keys[pygame.K_SPACE]:
-                    self.is_jump = True
+            if keys[pygame.K_SPACE]:
+                self.is_jump = True
             else:
                 y = self.coordinates[1]
-                if self.jump_count >= - 11:
+                if self.jump_count >= -11:
                     if self.jump_count < 0:
                         y += (self.jump_count ** 2) // 2
                     else:
@@ -191,18 +176,15 @@ class Game:
                 else:
                     self.is_jump = False
                     self.jump_count = 11
-
             self.draw_window((bird1, bird2, bird3))
 
 
 def main():
     pygame.init()
     pygame.display.set_caption('Crazy Beeee')
-    display_width = 800
-    display_height = 532
     game = Game(
-        display_width=display_width,
-        display_height=display_height)
+        display_width=config.DISPLAY_WIDTH,
+        display_height=config.DISPLAY_HEIGHT)
     game.run_game()
     pygame.quit()
 
