@@ -1,4 +1,5 @@
-import pygame, random
+import pygame
+import random
 
 pygame.init()
 
@@ -32,15 +33,15 @@ width = 70
 height = 70
 speed = 5
 
-isJump = False
-jumpcount = 11
+is_jump = False
+jump_count = 11
 
 standL = False
 standR = False
 left = False
 right = False
 
-animcount = 0
+anim_count = 0
 lastMove = "right"
 
 clock = pygame.time.Clock()
@@ -49,7 +50,7 @@ run = True
 bullets = []
 
 
-class Bird():
+class Bird:
     def __init__(self, away_y, speed, cd_hide):
         self.x = random.randrange(10, 700)
         self.y = away_y
@@ -91,7 +92,7 @@ class Bird():
             self.cd_hide -= 1
 
 
-class honey():
+class Honey:
     def __init__(self, x, y, radius, color, facing):
         self.x = x
         self.y = y
@@ -105,18 +106,18 @@ class honey():
 
 
 def usr_animation():
-    global animcount
+    global anim_count
 
-    if animcount + 1 >= 30:
-        animcount = 0
+    if anim_count + 1 >= 30:
+        anim_count = 0
 
     if left:
-        display.blit(walkLeft[animcount // 6], (x, y))
-        animcount += 4
+        display.blit(walkLeft[anim_count // 6], (x, y))
+        anim_count += 4
 
     elif right:
-        display.blit(walkRight[animcount // 6], (x, y))
-        animcount += 4
+        display.blit(walkRight[anim_count // 6], (x, y))
+        anim_count += 4
 
     else:
         if lastMove == "right":
@@ -126,7 +127,7 @@ def usr_animation():
             display.blit(beeStand2, (x, y))
 
 
-def drawWindow():
+def draw_window():
     display.blit(bg, (0, 0))
     bird1.draw()
     bird2.draw()
@@ -156,7 +157,7 @@ def make_bullet(x, y, width):
             facing = -1
 
         if len(bullets) < 10:
-            bullets.append(honey(round(x + width // 2), round(y + width // 2),
+            bullets.append(Honey(round(x + width // 2), round(y + width // 2),
                                  6, (251, 236, 93), facing))
 
 
@@ -192,20 +193,20 @@ while run:
         standL = False
         lastMove = "right"
 
-    if not (isJump):
+    if not is_jump:
         if keys[pygame.K_SPACE]:
-            isJump = True
+            is_jump = True
     else:
-        if jumpcount >= - 11:
-            if jumpcount < 0:
-                y += (jumpcount ** 2) // 2
+        if jump_count >= - 11:
+            if jump_count < 0:
+                y += (jump_count ** 2) // 2
             else:
-                y -= (jumpcount ** 2) // 2
-            jumpcount -= 1
+                y -= (jump_count ** 2) // 2
+            jump_count -= 1
         else:
-            isJump = False
-            jumpcount = 11
+            is_jump = False
+            jump_count = 11
 
-    drawWindow()
+    draw_window()
 
 pygame.quit()
