@@ -5,7 +5,7 @@ pygame.init()
 display_width = 800
 display_height = 532
 
-display = pygame.display.set_mode((display_width,display_height))
+display = pygame.display.set_mode((display_width, display_height))
 
 pygame.display.set_caption('Crazy Beeee')
 
