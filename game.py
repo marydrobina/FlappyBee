@@ -1,31 +1,16 @@
 import pygame
 import random
 
+import pics
+
 pygame.init()
 
 display_width = 800
 display_height = 532
 
-display = pygame.display.set_mode((display_width,display_height))
+display = pygame.display.set_mode((display_width, display_height))
 
 pygame.display.set_caption('Crazy Beeee')
-
-walkRight = [pygame.image.load('r1.png'), pygame.image.load('r2.png'),
-             pygame.image.load('r3.png'), pygame.image.load('r4.png'),
-             pygame.image.load('r5.png'), pygame.image.load('r6.png')]
-walkLeft = [pygame.image.load('l1.png'), pygame.image.load('l2.png'),
-            pygame.image.load('l3.png'), pygame.image.load('l4.png'),
-            pygame.image.load('l5.png'), pygame.image.load('l6.png')]
-
-birdFlyRight = [pygame.image.load('f1r.png'), pygame.image.load('f2r.png')]
-birdFlyLeft = [pygame.image.load('f1l.png'), pygame.image.load('f2l.png')]
-
-birdHitRight = [pygame.image.load('gh1r.png'), pygame.image.load('gh2r.png')]
-birdHitLeft = [pygame.image.load('gh1l.png'), pygame.image.load('gh2l.png')]
-
-bg = pygame.image.load('bg.jpg')
-beeStand1 = pygame.image.load('r1.png')
-beeStand2 = pygame.image.load('l1.png')
 
 x = 10
 y = 532 - 70
@@ -66,10 +51,10 @@ class Bird:
         if self.img_cnt == 4:
             self.img_cnt = 0
         if self.x > 350:
-            display.blit(birdFlyLeft[self.img_cnt // 2], (self.x, self.y))
+            display.blit(pics.BIRD_FLY_LEFT[self.img_cnt // 2], (self.x, self.y))
             self.img_cnt += 1
         else:
-            display.blit(birdFlyRight[self.img_cnt // 2], (self.x, self.y))
+            display.blit(pics.BIRD_FLY_RIGHT[self.img_cnt // 2], (self.x, self.y))
             self.img_cnt += 1
 
         if self.come and self.cd_hide == 0:
@@ -112,23 +97,23 @@ def usr_animation():
         anim_count = 0
 
     if left:
-        display.blit(walkLeft[anim_count // 6], (x, y))
+        display.blit(pics.WALK_LEFT[anim_count // 6], (x, y))
         anim_count += 4
 
     elif right:
-        display.blit(walkRight[anim_count // 6], (x, y))
+        display.blit(pics.WALK_RIGHT[anim_count // 6], (x, y))
         anim_count += 4
 
     else:
         if lastMove == "right":
-            display.blit(beeStand1, (x, y))
+            display.blit(pics.BEE_STAND1, (x, y))
 
         elif lastMove == "left":
-            display.blit(beeStand2, (x, y))
+            display.blit(pics.BEE_STAND2, (x, y))
 
 
 def draw_window():
-    display.blit(bg, (0, 0))
+    display.blit(pics.BG, (0, 0))
     bird1.draw()
     bird2.draw()
     bird3.draw()
