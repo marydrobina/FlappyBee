@@ -25,3 +25,4 @@ GIF previews
 
 .idea
 venv
+__pycache__/
