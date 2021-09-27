@@ -73,7 +73,7 @@ class Game:
 
     def __init__(self, display_width: int, display_height: int):
         self.display = pygame.display.set_mode((display_width, display_height))
-        self.coordinates = (10, display_height - 70)
+        self.coordinates = {'x': 10, 'y': display_height - 70}
         self.size = {'width': 70, 'height': 70}
         self.directions = {'left': False, 'right': False}
         self.speed = 5
@@ -87,27 +87,30 @@ class Game:
         self.run = True
         self.bullets = list()
 
+    def coordinates_tuple(self) -> tuple:
+        return self.coordinates['x'], self.coordinates['y']
+
     def usr_animation(self):
         if self.anim_count + 1 >= 30:
             self.anim_count = 0
         if self.directions['left']:
-            self.display.blit(pics.WALK_LEFT[self.anim_count // 6], self.coordinates)
+            self.display.blit(pics.WALK_LEFT[self.anim_count // 6], self.coordinates_tuple())
             self.anim_count += 4
         elif self.directions['right']:
-            self.display.blit(pics.WALK_RIGHT[self.anim_count // 6], self.coordinates)
+            self.display.blit(pics.WALK_RIGHT[self.anim_count // 6], self.coordinates_tuple())
             self.anim_count += 4
         else:
             if self.last_move == "right":
-                self.display.blit(pics.BEE_STAND1, self.coordinates)
+                self.display.blit(pics.BEE_STAND1, self.coordinates_tuple())
             elif self.last_move == "left":
-                self.display.blit(pics.BEE_STAND2, self.coordinates)
+                self.display.blit(pics.BEE_STAND2, self.coordinates_tuple())
 
     def draw_window(self, birds: tuple):
         self.display.blit(pics.BG, (0, 0))
         bird1, bird2, bird3 = birds
-        bird1.draw()
-        bird2.draw()
-        bird3.draw()
+        bird1.draw(self.display)
+        bird2.draw(self.display)
+        bird3.draw(self.display)
         self.usr_animation()
         for bullet in self.bullets:
             bullet.draw(self.display)
@@ -126,12 +129,10 @@ class Game:
             else:
                 facing = -1
             if len(self.bullets) < 10:
-                x = self.coordinates[0]
-                y = self.coordinates[1]
                 self.bullets.append(
                     Honey(
-                        round(x + self.size['width'] // 2),
-                        round(y + self.size['width'] // 2),
+                        round(self.coordinates['x'] + self.size['width'] // 2),
+                        round(self.coordinates['y'] + self.size['width'] // 2),
                         6,
                         (251, 236, 93),
                         facing))
@@ -148,30 +149,29 @@ class Game:
                     self.run = False
             keys = pygame.key.get_pressed()
             self.make_bullet()
-            x = self.coordinates[0]
-            if keys[pygame.K_LEFT] and x > 5:
-                x -= self.speed
+            if keys[pygame.K_LEFT] and self.coordinates['x'] > 5:
+                self.coordinates['x'] -= self.speed
                 self.directions['left'] = True
                 self.directions['right'] = False
                 self.standL = True
                 self.standR = False
                 self.last_move = "left"
-            elif keys[pygame.K_RIGHT] and x < 800 - self.size['width'] - 5:
-                x += self.speed
+            elif keys[pygame.K_RIGHT] and self.coordinates['x'] < 800 - self.size['width'] - 5:
+                self.coordinates['x'] += self.speed
                 self.directions['left'] = False
                 self.directions['right'] = True
                 self.standR = True
                 self.standL = False
                 self.last_move = "right"
-            if keys[pygame.K_SPACE]:
-                self.is_jump = True
+            if not self.is_jump:
+                if keys[pygame.K_SPACE]:
+                    self.is_jump = True
             else:
-                y = self.coordinates[1]
                 if self.jump_count >= -11:
                     if self.jump_count < 0:
-                        y += (self.jump_count ** 2) // 2
+                        self.coordinates['y'] += (self.jump_count ** 2) // 2
                     else:
-                        y -= (self.jump_count ** 2) // 2
+                        self.coordinates['y'] -= (self.jump_count ** 2) // 2
                     self.jump_count -= 1
                 else:
                     self.is_jump = False
