@@ -16,33 +16,43 @@ class Bird:
         self.ay = away_y
         self.speed = speed
         self.dest_y = self.speed * random.randrange(50, 70)
-        self.img_cnt = 0
+        self.wings_animation_iterator = 0
         self.cd_hide = cd_hide
-        self.come = True
-        self.go_away = False
+        self.come_down = True
+        self.go_away_up = False
 
-    def draw(self, display: pygame.Surface):
-        if self.img_cnt == 4:
-            self.img_cnt = 0
+    def wings_animation_process(self, display: pygame.Surface) -> None:
+        """
+        Processing birds' wings animation
+
+        :param display: pygame.Surface
+        :return: None
+        """
+
+        if self.wings_animation_iterator == 4:
+            self.wings_animation_iterator = 0
         if self.x > 350:
-            display.blit(pics.BIRD_FLY_LEFT[self.img_cnt // 2], (self.x, self.y))
-            self.img_cnt += 1
+            display.blit(pics.BIRD_FLY_LEFT[self.wings_animation_iterator // 2], (self.x, self.y))
+            self.wings_animation_iterator += 1
         else:
-            display.blit(pics.BIRD_FLY_RIGHT[self.img_cnt // 2], (self.x, self.y))
-            self.img_cnt += 1
-        if self.come and self.cd_hide == 0:
+            display.blit(pics.BIRD_FLY_RIGHT[self.wings_animation_iterator // 2], (self.x, self.y))
+            self.wings_animation_iterator += 1
+
+    def draw(self, display: pygame.Surface) -> None:
+        self.wings_animation_process(display)
+        if self.come_down and self.cd_hide == 0:
             if self.y < self.dest_y:
                 self.y += self.speed
             else:
-                self.come = False
-                self.go_away = True
+                self.come_down = False
+                self.go_away_up = True
                 self.dest_y = self.ay
-        elif self.go_away:
+        elif self.go_away_up:
             if self.y > self.dest_y:
                 self.y -= self.speed
             else:
-                self.come = True
-                self.go_away = False
+                self.come_down = True
+                self.go_away_up = False
                 self.x = random.randrange(10, 700)
                 self.dest_y = self.speed * random.randrange(50, 70)
                 self.cd_hide = 50
