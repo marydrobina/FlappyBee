@@ -123,34 +123,42 @@ class Game:
     def draw_window(self, birds: tuple):
         self.display.blit(pics.BG, (0, 0))
         bird1, bird2, bird3 = birds
-        bird1.draw(self.display)
-        bird2.draw(self.display)
-        bird3.draw(self.display)
+        for bird in (bird1, bird2, bird3):
+            bird.draw(display=self.display)
         self.usr_animation()
         for bullet in self.bullets:
             bullet.draw(self.display)
         pygame.display.update()
 
-    def make_bullet(self):
+    def bullet_move(self):
         for bullet in self.bullets:
             if 800 > bullet.x > 0:
                 bullet.x += bullet.vel
             else:
                 self.bullets.pop(self.bullets.index(bullet))
+
+    def get_bullet_direction(self) -> int:
+        if self.last_move == "right":
+            facing = 1
+        else:
+            facing = -1
+        return facing
+
+    def make_bullet(self):
+        self.bullet_move()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_f]:
-            if self.last_move == "right":
-                facing = 1
-            else:
-                facing = -1
+            facing = self.get_bullet_direction()
             if len(self.bullets) < 10:
                 self.bullets.append(
                     Honey(
-                        round(self.coordinates['x'] + self.size['width'] // 2),
-                        round(self.coordinates['y'] + self.size['width'] // 2),
-                        6,
-                        (251, 236, 93),
-                        facing))
+                        x=round(self.coordinates['x'] + self.size['width'] // 2),
+                        y=round(self.coordinates['y'] + self.size['width'] // 2),
+                        radius=6,
+                        color=(251, 236, 93),
+                        facing=facing
+                    )
+                )
 
     def run_game(self):
         bird1 = Bird(-80, 5, 0)
