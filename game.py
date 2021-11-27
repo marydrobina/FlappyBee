@@ -182,10 +182,10 @@ class Game:
 def main():
     pygame.init()
     pygame.display.set_caption('Crazy Beeee')
-    game = Game(
+    Game(
         display_width=config.DISPLAY_WIDTH,
-        display_height=config.DISPLAY_HEIGHT)
-    game.run_game()
+        display_height=config.DISPLAY_HEIGHT
+    ).run_game()
     pygame.quit()
 
 
