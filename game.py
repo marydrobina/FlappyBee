@@ -8,16 +8,16 @@ import pics
 class Bird:
     def __init__(
             self,
-            away_y: int,
+            first_position_y: int,
             speed: int,
-            cd_hide: int):
+            next_birds_appearance_latency: int):
         self.x = random.randrange(10, 700)
-        self.y = away_y
-        self.ay = away_y
+        self.y = first_position_y
+        self.first_position_y = first_position_y
         self.speed = speed
         self.dest_y = self.speed * random.randrange(50, 70)
         self.wings_animation_iterator = 0
-        self.next_birds_appearance_latency = cd_hide
+        self.next_birds_appearance_latency = next_birds_appearance_latency
         self.come_down = True
         self.go_away_up = False
 
@@ -43,7 +43,7 @@ class Bird:
         else:
             self.come_down = False
             self.go_away_up = True
-            self.dest_y = self.ay
+            self.dest_y = self.first_position_y
 
     def going_up(self) -> None:
         if self.y > self.dest_y:
