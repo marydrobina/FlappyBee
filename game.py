@@ -107,9 +107,15 @@ class Game:
         self.clock = pygame.time.Clock()
         self.run = True
         self.bullets = list()
+        self.score = 0
+        self.font = pygame.font.SysFont("calibri", 32)
 
     def coordinates_tuple(self) -> tuple:
         return self.coordinates['x'], self.coordinates['y']
+
+    def show_score(self, x: int, y: int) -> None:
+        score = self.font.render("Score: " + str(self.score), True, (255, 255, 255))
+        self.display.blit(score, (x, y))
 
     def usr_animation(self) -> None:
         if self.anim_count + 1 >= 30:
@@ -135,6 +141,7 @@ class Game:
         for bullet in self.bullets:
             bullet.draw(self.display)
         self.collision(birds=[bird1, bird2, bird3])
+        self.show_score(config.DISPLAY_WIDTH - 150, 10)
         pygame.display.update()
 
     def bullet_move(self) -> None:
@@ -231,9 +238,11 @@ class Game:
                 bird_top_border = bird.y - 40
                 bird_bottom_border = bird.y + 40
                 if bird_left_border < bullet.x < bird_right_border \
-                        and bird_top_border < bullet.y < bird_bottom_border:
+                        and bird_top_border < bullet.y < bird_bottom_border\
+                        and not bird.is_hit:
                     self.bullets.pop(self.bullets.index(bullet))
                     bird.is_hit = True
+                    self.score += 1
 
     def run_game(self) -> None:
         bird1 = Bird(-80, 5, 0)
