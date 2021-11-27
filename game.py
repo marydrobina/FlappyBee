@@ -105,7 +105,7 @@ class Game:
     def coordinates_tuple(self) -> tuple:
         return self.coordinates['x'], self.coordinates['y']
 
-    def usr_animation(self):
+    def usr_animation(self) -> None:
         if self.anim_count + 1 >= 30:
             self.anim_count = 0
         if self.directions['left']:
@@ -120,7 +120,7 @@ class Game:
             elif self.last_move == "left":
                 self.display.blit(pics.BEE_STAND2, self.coordinates_tuple())
 
-    def draw_window(self, birds: tuple):
+    def draw_window(self, birds: tuple) -> None:
         self.display.blit(pics.BG, (0, 0))
         bird1, bird2, bird3 = birds
         for bird in (bird1, bird2, bird3):
@@ -130,7 +130,7 @@ class Game:
             bullet.draw(self.display)
         pygame.display.update()
 
-    def bullet_move(self):
+    def bullet_move(self) -> None:
         for bullet in self.bullets:
             if 800 > bullet.x > 0:
                 bullet.x += bullet.vel
@@ -144,7 +144,7 @@ class Game:
             facing = -1
         return facing
 
-    def make_bullet(self):
+    def make_bullet(self) -> None:
         self.bullet_move()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_f]:
@@ -160,12 +160,12 @@ class Game:
                     )
                 )
 
-    def stop_game_btn_check(self):
+    def stop_game_btn_check(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.run = False
 
-    def move_bee_left(self):
+    def move_bee_left(self) -> None:
         self.coordinates['x'] -= self.speed
         self.directions['left'] = True
         self.directions['right'] = False
@@ -173,7 +173,7 @@ class Game:
         self.standR = False
         self.last_move = "left"
 
-    def move_bee_right(self):
+    def move_bee_right(self) -> None:
         self.coordinates['x'] += self.speed
         self.directions['left'] = False
         self.directions['right'] = True
@@ -181,36 +181,49 @@ class Game:
         self.standL = False
         self.last_move = "right"
 
-    def run_game(self):
+    def game_state_setup(self) -> None:
+        self.clock.tick(100)
+        pygame.time.delay(22)
+        self.stop_game_btn_check()
+
+    def direction_moves(self, keys) -> None:
+        if keys[pygame.K_LEFT] and self.coordinates['x'] > 5:
+            self.move_bee_left()
+        elif keys[pygame.K_RIGHT] and self.coordinates['x'] < 800 - self.size['width'] - 5:
+            self.move_bee_right()
+
+    def jump_move(self) -> None:
+        if self.jump_count < 0:
+            self.coordinates['y'] += (self.jump_count ** 2) // 2
+        else:
+            self.coordinates['y'] -= (self.jump_count ** 2) // 2
+        self.jump_count -= 1
+
+    def processing_jump(self) -> None:
+        if self.jump_count >= -11:
+            self.jump_move()
+        else:
+            self.is_jump = False
+            self.jump_count = 11
+
+    def all_moves(self):
+        keys = pygame.key.get_pressed()
+        self.make_bullet()
+        self.direction_moves(keys)
+        if not self.is_jump:
+            if keys[pygame.K_SPACE]:
+                self.is_jump = True
+        else:
+            self.processing_jump()
+
+    def run_game(self) -> None:
         bird1 = Bird(-80, 5, 0)
         bird2 = Bird(-90, 6, 70)
         bird3 = Bird(-80, 5, 120)
         while self.run:
-            self.clock.tick(100)
-            pygame.time.delay(22)
-            self.stop_game_btn_check()
-            keys = pygame.key.get_pressed()
-            self.make_bullet()
-            if keys[pygame.K_LEFT] and self.coordinates['x'] > 5:
-                self.move_bee_left()
-            elif keys[pygame.K_RIGHT] and self.coordinates['x'] < 800 - self.size['width'] - 5:
-                self.move_bee_right()
-            if not self.is_jump:
-                if keys[pygame.K_SPACE]:
-                    self.is_jump = True
-            else:
-                if self.jump_count >= -11:
-                    if self.jump_count < 0:
-                        self.coordinates['y'] += (self.jump_count ** 2) // 2
-                    else:
-                        self.coordinates['y'] -= (self.jump_count ** 2) // 2
-                    self.jump_count -= 1
-                else:
-                    self.is_jump = False
-                    self.jump_count = 11
+            self.game_state_setup()
+            self.all_moves()
             self.draw_window((bird1, bird2, bird3))
-
-
 
 
 def main():
