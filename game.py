@@ -17,47 +17,52 @@ class Bird:
         self.speed = speed
         self.dest_y = self.speed * random.randrange(50, 70)
         self.wings_animation_iterator = 0
-        self.cd_hide = cd_hide
+        self.next_birds_appearance_latency = cd_hide
         self.come_down = True
         self.go_away_up = False
 
     def wings_animation_process(self, display: pygame.Surface) -> None:
-        """
-        Processing birds' wings animation
-
-        :param display: pygame.Surface
-        :return: None
-        """
-
         if self.wings_animation_iterator == 4:
             self.wings_animation_iterator = 0
         if self.x > 350:
-            display.blit(pics.BIRD_FLY_LEFT[self.wings_animation_iterator // 2], (self.x, self.y))
+            display.blit(
+                pics.BIRD_FLY_LEFT[self.wings_animation_iterator // 2],
+                (self.x, self.y)
+            )
             self.wings_animation_iterator += 1
         else:
-            display.blit(pics.BIRD_FLY_RIGHT[self.wings_animation_iterator // 2], (self.x, self.y))
+            display.blit(
+                pics.BIRD_FLY_RIGHT[self.wings_animation_iterator // 2],
+                (self.x, self.y)
+            )
             self.wings_animation_iterator += 1
+
+    def going_down(self) -> None:
+        if self.y < self.dest_y:
+            self.y += self.speed
+        else:
+            self.come_down = False
+            self.go_away_up = True
+            self.dest_y = self.ay
+
+    def going_up(self) -> None:
+        if self.y > self.dest_y:
+            self.y -= self.speed
+        else:
+            self.come_down = True
+            self.go_away_up = False
+            self.x = random.randrange(10, 700)
+            self.dest_y = self.speed * random.randrange(50, 70)
+            self.next_birds_appearance_latency = 50
 
     def draw(self, display: pygame.Surface) -> None:
         self.wings_animation_process(display)
-        if self.come_down and self.cd_hide == 0:
-            if self.y < self.dest_y:
-                self.y += self.speed
-            else:
-                self.come_down = False
-                self.go_away_up = True
-                self.dest_y = self.ay
+        if self.come_down and self.next_birds_appearance_latency == 0:
+            self.going_down()
         elif self.go_away_up:
-            if self.y > self.dest_y:
-                self.y -= self.speed
-            else:
-                self.come_down = True
-                self.go_away_up = False
-                self.x = random.randrange(10, 700)
-                self.dest_y = self.speed * random.randrange(50, 70)
-                self.cd_hide = 50
-        elif self.cd_hide > 0:
-            self.cd_hide -= 1
+            self.going_up()
+        elif self.next_birds_appearance_latency > 0:
+            self.next_birds_appearance_latency -= 1
 
 
 class Honey:
