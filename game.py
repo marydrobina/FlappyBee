@@ -20,19 +20,24 @@ class Bird:
         self.next_birds_appearance_latency = next_birds_appearance_latency
         self.come_down = True
         self.go_away_up = False
+        self.is_hit = False
 
     def wings_animation_process(self, display: pygame.Surface) -> None:
         if self.wings_animation_iterator == 4:
             self.wings_animation_iterator = 0
         if self.x > 350:
             display.blit(
-                pics.BIRD_FLY_LEFT[self.wings_animation_iterator // 2],
+                pics.BIRD_FLY_LEFT[self.wings_animation_iterator // 2]
+                if not self.is_hit else
+                pics.BIRD_HIT_LEFT[self.wings_animation_iterator // 2],
                 (self.x, self.y)
             )
             self.wings_animation_iterator += 1
         else:
             display.blit(
-                pics.BIRD_FLY_RIGHT[self.wings_animation_iterator // 2],
+                pics.BIRD_FLY_RIGHT[self.wings_animation_iterator // 2]
+                if not self.is_hit else
+                pics.BIRD_HIT_RIGHT[self.wings_animation_iterator // 2],
                 (self.x, self.y)
             )
             self.wings_animation_iterator += 1
@@ -51,6 +56,7 @@ class Bird:
         else:
             self.come_down = True
             self.go_away_up = False
+            self.is_hit = False
             self.x = random.randrange(10, 700)
             self.dest_y = self.speed * random.randrange(50, 70)
             self.next_birds_appearance_latency = 50
@@ -128,6 +134,7 @@ class Game:
         self.usr_animation()
         for bullet in self.bullets:
             bullet.draw(self.display)
+        self.collision(birds=[bird1, bird2, bird3])
         pygame.display.update()
 
     def bullet_move(self) -> None:
@@ -215,6 +222,18 @@ class Game:
                 self.is_jump = True
         else:
             self.processing_jump()
+
+    def collision(self, birds: list) -> None:
+        for bird in birds:
+            for bullet in self.bullets:
+                bird_left_border = bird.x - 47
+                bird_right_border = bird.x + 47
+                bird_top_border = bird.y - 40
+                bird_bottom_border = bird.y + 40
+                if bird_left_border < bullet.x < bird_right_border \
+                        and bird_top_border < bullet.y < bird_bottom_border:
+                    self.bullets.pop(self.bullets.index(bullet))
+                    bird.is_hit = True
 
     def run_game(self) -> None:
         bird1 = Bird(-80, 5, 0)
