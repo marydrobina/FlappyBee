@@ -4,6 +4,7 @@ import random
 import config
 import pics
 
+
 class Bird:
     def __init__(
             self,
@@ -107,7 +108,7 @@ class Game:
         self.run = True
         self.bullets = list()
         self.score = 0
-        self.font = pygame.font.SysFont("calibri", 32)
+        self.font = pygame.font.SysFont("calibri", 40)
 
     def coordinates_tuple(self) -> tuple:
         return self.coordinates['x'], self.coordinates['y']
