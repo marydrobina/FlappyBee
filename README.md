@@ -1,4 +1,4 @@
-# BEE
+# FLAPPY BEE
 
 # Running project
 ### Win
